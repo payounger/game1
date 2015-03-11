@@ -6,19 +6,16 @@ import javalib.colors.Blue;
 import javalib.colors.Red;
 
 public class Game1 {
+    
+        private final int sqSide = 30;
+        private final int gridSize = 7;
+        private final worldArray = new DataStruct[(gridSize*gridSize)-1];
+        private final int halfSide = (sqSide/2);
+        
+
 
     public static int main(String[] args) {
-        int sqSide;
-        int gridSize;
-        DataStruct[] worldArray;
-        int halfSide;
         
-        sqSide = 30;
-        gridSize = 7;
-        worldArray = new DataStruct[(gridSize*gridSize)-1];
-        halfSide = (sqSide/2);
-        
-
         
         //Should initialize an array filled entirely with empty DataStructs
         //that have their x and y coordinates done properly. Also the player
@@ -43,6 +40,8 @@ public class Game1 {
         return array;
     }
         
+        
+        //returns the 
         public DataStruct playerLocation(DataStruct[] array){
             DataStruct target;
             int targetKey;
@@ -75,11 +74,14 @@ public class Game1 {
                     return new FrameImage(currentPosn, sqSide, sqSide, new Black());
                 }else if(array[i].getKey()==1){
                     return new RectangleImage(currentPosn, sqSide, sqSide, new Red());
-                }else if(array[i].getKey()==2){
+                }else //if (array[i].getKey()==2){
                         return new RectangleImage(currentPosn, sqSide, sqSide);
             }
         }
         
+        
+        
+            
         
         
         
