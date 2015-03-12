@@ -10,7 +10,7 @@ import javalib.worldimages.RectangleImage;
 import javalib.worldimages.WorldImage;
 import game1.Pair;
 
-public class Game1 {
+public class Game1 extends World{
     
         public final int sqSide = 30;
         public final int gridSize = 7;
@@ -19,8 +19,12 @@ public class Game1 {
         
 
 
-    public static int main(String[] args) {
-                return 5;
+    public void main(String[] args) {
+                Game1 world;
+                
+                
+                world.initialize(worldArray);
+                
             }
         
         
@@ -93,6 +97,11 @@ public class Game1 {
         int x = Struct.getX()+1;
         int y = Struct.getY()+1;
         return new Pair(x*halfSide, y*halfSide);
+    }
+
+    @Override
+    public WorldImage makeImage() {
+        
     }
 }
         
