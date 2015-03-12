@@ -17,13 +17,36 @@ public class Game1 extends World{
         public final DataStruct[]worldArray = new DataStruct[(gridSize*gridSize)-1];
         public final int halfSide = (sqSide/2);
         
+        public WorldImage makeImage() {
+        return composeWorld(worldArray);
+        
+    }
+        public Game1(DataStruct[] array){
+            super();
+            this. = array;
+        }
 
-
+	public BlobWorldFun(Blob blob) {
+		super();
+		this.blob = blob;
+	}
+        
+        public void playerInput(String ke){
+            if(ke.equals("right")){
+                
+            }else if(ke.equals("left")){
+                
+            }
+            
+        }
+        
+        
     public void main(String[] args) {
                 Game1 world;
                 
                 
-                world.initialize(worldArray);
+                world = world.initialize(worldArray);
+                world.makeImage();
                 
             }
         
@@ -63,7 +86,7 @@ public class Game1 extends World{
                     return target;
                 } //else should throw an excepttion but this should never be reached
             }
-        }
+        }   
         
         public DataStruct enemyLocations(DataStruct[] array){
             DataStruct target;
@@ -99,10 +122,8 @@ public class Game1 extends World{
         return new Pair(x*halfSide, y*halfSide);
     }
 
-    @Override
-    public WorldImage makeImage() {
-        
-    }
+    
+
 }
         
         
