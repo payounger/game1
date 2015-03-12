@@ -4,24 +4,31 @@ import javalib.funworld.World;
 import javalib.colors.Black;
 import javalib.colors.Blue;
 import javalib.colors.Red;
+import javalib.worldimages.FrameImage;
+import javalib.worldimages.Posn;
+import javalib.worldimages.RectangleImage;
+import javalib.worldimages.WorldImage;
+import game1.Pair;
 
 public class Game1 {
     
-        private final int sqSide = 30;
-        private final int gridSize = 7;
-        private final worldArray = new DataStruct[(gridSize*gridSize)-1];
-        private final int halfSide = (sqSide/2);
+        public final int sqSide = 30;
+        public final int gridSize = 7;
+        public final DataStruct[]worldArray = new DataStruct[(gridSize*gridSize)-1];
+        public final int halfSide = (sqSide/2);
         
 
 
     public static int main(String[] args) {
+                return 5;
+            }
         
         
         //Should initialize an array filled entirely with empty DataStructs
         //that have their x and y coordinates done properly. Also the player
         //should be spawned at x=3, y=6.
         
-        public DataStruct[] initialize(DataStruct[] array){
+        private DataStruct[] initialize(DataStruct[] array){
             
         for(int i=0; i<((gridSize*gridSize)-1); i++){
             
@@ -66,18 +73,28 @@ public class Game1 {
                 }
             }
         
-        public worldImage composeWorld(DataStruct[] array){
+        public WorldImage composeWorld(DataStruct[] array){
             Posn currentPosn;
             for(int i=0; i<((gridSize*gridSize)-1); i++){
-                currentPosn = ((array[i].getX()+1)*halfSide), ((array[i].getY()+1)*halfSide);
+                Pair pairy = calcPin(array[i], i);
+                int pairyX = pairy.getX();
+                int pairyY = pairy.getY();
+                currentPosn = new Posn(pairyX, pairyY);
                 if(array[i].getKey()==0){
                     return new FrameImage(currentPosn, sqSide, sqSide, new Black());
                 }else if(array[i].getKey()==1){
                     return new RectangleImage(currentPosn, sqSide, sqSide, new Red());
                 }else //if (array[i].getKey()==2){
-                        return new RectangleImage(currentPosn, sqSide, sqSide);
+                        return new RectangleImage(currentPosn, sqSide, sqSide, new Blue());
             }
         }
+        
+        public Pair calcPin(DataStruct Struct, int i){
+        int x = Struct.getX()+1;
+        int y = Struct.getY()+1;
+        return new Pair(x*halfSide, y*halfSide);
+    }
+}
         
         
         
