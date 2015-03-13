@@ -16,7 +16,6 @@ public class Game1 extends World {
 
     public WorldImage makeImage() {
         return composeWorld(worldArray);
-
     }
 
     public Game1(DataStruct[] array) {
@@ -32,10 +31,10 @@ public class Game1 extends World {
 
         if (ke.equals("right")) {
             System.out.println("right key input recieved");
-            if (playerIndex == gridSize - 1) {
-                if (worldArray[0].getKey() == 0) {
-                    worldArray[0].setKey(2);
-                    worldArray[playerIndex].setKey(0);
+            if (playerIndex == gridSize*gridSize - 1) {
+                if (worldArray[42].getKey() == 0) {
+                    worldArray[42] = worldArray[42].setKey(2);
+                    worldArray[playerIndex] = worldArray[playerIndex].setKey(0);
                     w = new Game1(worldArray);
                     return w;
 
@@ -43,8 +42,8 @@ public class Game1 extends World {
                     return endOfWorld("right collision");
                 }
             } else if (worldArray[playerIndex + 1].getKey() == 0) {
-                worldArray[playerIndex + 1].setKey(2);
-                worldArray[playerIndex].setKey(0);
+                worldArray[playerIndex + 1] = worldArray[playerIndex + 1].setKey(2);
+                worldArray[playerIndex] = worldArray[playerIndex].setKey(0);
                 w = new Game1(worldArray);
                 System.out.println("new world returned based on right key input");
                 return w;
@@ -55,18 +54,18 @@ public class Game1 extends World {
         }
 
         if (ke.equals("left")) {
-            if (playerIndex == 0) {
-                if (worldArray[gridSize - 1].getKey() == 0) {
-                    worldArray[gridSize - 1].setKey(2);
-                    worldArray[playerIndex].setKey(0);
+            if (playerIndex == 42) {
+                if (worldArray[gridSize*gridSize - 1].getKey() == 0) {
+                    worldArray[gridSize*gridSize - 1] = worldArray[gridSize*gridSize - 1].setKey(2);
+                    worldArray[playerIndex] = worldArray[playerIndex].setKey(0);
                     w = new Game1(worldArray);
                     return w;
                 } else {
                     return endOfWorld("right collision");
                 }
             } else if (worldArray[playerIndex - 1].getKey() == 0) {
-                worldArray[playerIndex - 1].setKey(2);
-                worldArray[playerIndex].setKey(0);
+                worldArray[playerIndex -1] = worldArray[playerIndex - 1].setKey(2);
+                worldArray[playerIndex] = worldArray[playerIndex].setKey(0);
                 w = new Game1(worldArray);
                 return w;
             } else {
@@ -114,7 +113,7 @@ public class Game1 extends World {
     public DataStruct playerLocation(DataStruct[] array) {
         DataStruct target;
         int targetKey;
-        for (int i = 0; i < ((gridSize * gridSize) - 1); i++) {
+        for (int i = 0; i < (gridSize * gridSize); i++) {
             target = array[i];
             targetKey = target.getKey();
             if (targetKey == 2) {
@@ -146,6 +145,7 @@ public class Game1 extends World {
         for (int i = 0; i < array.length; i++) {
             currentPosn = calcPin(array[i], i);
             //System.out.println("i is " + i + " array x is " + array[i].getX() + " array y is " + array[i].getY() + " posn x is " + currentPosn.x + " posn y is " + currentPosn.y);
+            System.out.println("current player location is "+playerLocation(worldArray).getX());
             Posn thisPosn = currentPosn; //sqCenter;
             if (array[i].getKey() == 0) {
                 scene = new OverlayImages(scene, new FrameImage(thisPosn, sqSide, sqSide, new Black()));
