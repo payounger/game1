@@ -15,16 +15,21 @@ public class Game1 extends World {
     public DataStruct[] worldArray;
     public final int halfSide = (sqSide / 2);
     public final Posn sqCenter = new Posn(halfSide, halfSide);
-    public int ticker = 0;
-    public int score = 0;
-
+    public int ticker;
+    public int score;
+    public int spawnInterval = 2;
+    public int enemyMoveInterval = 2;
+    
     public WorldImage makeImage() {
         return composeWorld(worldArray);
     }
 
-    public Game1(DataStruct[] array) {
+    public Game1(DataStruct[] array, int score, int ticks) {
         super();
         worldArray = array;
+        this.score = score;        
+        ticker = ticks;
+
     }
 
     public World onKeyEvent(String ke) {
@@ -36,43 +41,47 @@ public class Game1 extends World {
         if (ke.equals("right")) {
             //System.out.println("right key input recieved");
             if (playerIndex == gridSize * gridSize - 1) {
-                if (worldArray[42].getKey() == 0) {
-                    worldArray[42] = worldArray[42].setKey(2);
+                if (worldArray[gridSize*(gridSize-1)].getKey() == 0) {
+                    worldArray[gridSize*(gridSize-1)] = worldArray[gridSize*(gridSize-1)].setKey(2);
                     worldArray[playerIndex] = worldArray[playerIndex].setKey(0);
-                    w = new Game1(worldArray);
+                    w = new Game1(worldArray, score, ticker);
                     return w;
 
                 } else {
+                    System.out.println(score);
                     return endOfWorld("right collision");
                 }
             } else if (worldArray[playerIndex + 1].getKey() == 0) {
                 worldArray[playerIndex + 1] = worldArray[playerIndex + 1].setKey(2);
                 worldArray[playerIndex] = worldArray[playerIndex].setKey(0);
-                w = new Game1(worldArray);
+                w = new Game1(worldArray, score, ticker);
                 //System.out.println("new world returned based on right key input");
                 return w;
             } else {
+                System.out.println(score);
                 return endOfWorld("right collision");
             }
 
         }
 
         if (ke.equals("left")) {
-            if (playerIndex == 42) {
+            if (playerIndex == gridSize*(gridSize-1)) {
                 if (worldArray[gridSize * gridSize - 1].getKey() == 0) {
                     worldArray[gridSize * gridSize - 1] = worldArray[gridSize * gridSize - 1].setKey(2);
                     worldArray[playerIndex] = worldArray[playerIndex].setKey(0);
-                    w = new Game1(worldArray);
+                    w = new Game1(worldArray, score, ticker);
                     return w;
                 } else {
+                    System.out.println(score);
                     return endOfWorld("right collision");
                 }
             } else if (worldArray[playerIndex - 1].getKey() == 0) {
                 worldArray[playerIndex - 1] = worldArray[playerIndex - 1].setKey(2);
                 worldArray[playerIndex] = worldArray[playerIndex].setKey(0);
-                w = new Game1(worldArray);
+                w = new Game1(worldArray, score, ticker);
                 return w;
             } else {
+                System.out.println(score);
                 return endOfWorld("left collision");
             }
 
@@ -80,6 +89,7 @@ public class Game1 extends World {
 
         if (ke.equals("x")) {
             System.out.println("x input recieved");
+            System.out.println(score);
             return endOfWorld("x hit to quit");
         }
         return endOfWorld("this should only happen if u hit not left or not right");
@@ -87,21 +97,20 @@ public class Game1 extends World {
     }
 
     public World onTick() {
-        ticker = ticker++;
-        System.out.println(ticker);
-        if (ticker % 2 == 0) {
+        //System.out.println(ticker);
+        if (ticker % enemyMoveInterval == 0) {
             moveEnemies();
         }
-        if (ticker % 5 == 0) {
+        if (ticker % spawnInterval == 0) {
             //System.out.println("spawn triggered");
             spawnEnemies();
         }
-        return new Game1(worldArray);
+        return new Game1(worldArray, score, ticker+1);
     }
 
     public void moveEnemies() {
         ArrayList<DataStruct> enemyArray = enemyLocations(worldArray);
-        System.out.println(enemyArray.toString());
+        //System.out.println(enemyArray.toString());
         for (int i = 0; i < enemyArray.size(); i++) {
             DataStruct currentEnemy = enemyArray.get(i);
             int currentEnemyWorldIndex = currentEnemy.getX() + currentEnemy.getY() * (gridSize);
@@ -115,9 +124,8 @@ public class Game1 extends World {
                 }
             } else {
                 worldArray[currentEnemyWorldIndex] = worldArray[currentEnemyWorldIndex].setKey(0);
+                score = score+1;
             }
-            score = score++;
-
         }
     }
 
@@ -134,10 +142,10 @@ public class Game1 extends World {
 
     public static void main(String[] args) {
         Game1 world;
-        world = new Game1(new DataStruct[(gridSize * gridSize)]);
+        world = new Game1(new DataStruct[(gridSize * gridSize)], 0, 0);
         world.initialize();
         world.spawnEnemies();
-        world.bigBang(sqSide * gridSize, sqSide * gridSize, .75);
+        world.bigBang(sqSide * gridSize, sqSide * gridSize, .25);
     }
 
     //Should initialize an array filled entirely with empty DataStructs
@@ -147,7 +155,7 @@ public class Game1 extends World {
         for (int x = 0; x < gridSize; x++) {
             for (int y = 0; y < gridSize; y++) {
                 int i = y * (gridSize) + x;
-                if (x == 3 && y == 6) {
+                if (x == (gridSize-1)/2 && y == gridSize-1) {
                     worldArray[i] = new DataStruct(x, y, 2, 0);
                 } else {
                     worldArray[i] = new DataStruct(x, y, 0, 0);
@@ -174,7 +182,7 @@ public class Game1 extends World {
         DataStruct target;
         int targetKey;
         ArrayList<DataStruct> output = new ArrayList();
-        for (int i = 0; i < ((gridSize * gridSize) - 1); i++) {
+        for (int i = 0; i < (gridSize * gridSize); i++) {
             target = array[i];
             targetKey = target.getKey();
             if (targetKey == 1) {
@@ -190,7 +198,7 @@ public class Game1 extends World {
         int width = height;
         WorldImage scene = new RectangleImage(new Posn(width / 2, height / 2), width, height, new White());
         for (int i = 0; i < array.length; i++) {
-            currentPosn = calcPin(array[i], i);
+            currentPosn = calcPin(array[i]);
             //System.out.println("i is " + i + " array x is " + array[i].getX() + " array y is " + array[i].getY() + " posn x is " + currentPosn.x + " posn y is " + currentPosn.y);
             //System.out.println("current player location is " + playerLocation(worldArray).getX());
             Posn thisPosn = currentPosn; //sqCenter;
@@ -207,7 +215,7 @@ public class Game1 extends World {
         return scene;
     }
 
-    public Posn calcPin(DataStruct Struct, int i) {
+    public Posn calcPin(DataStruct Struct) {
         int x = Struct.getX();
         int y = Struct.getY();
         return new Posn(x * sqSide + halfSide, y * sqSide + halfSide);
