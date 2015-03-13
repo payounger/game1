@@ -32,4 +32,10 @@ public class DataStruct {
         return delay;
     }
     
+    public DataStruct setKey(int i){
+        DataStruct newby;
+        newby = new DataStruct(this.getX(), this.getY(), i, this.getDelay());
+        return newby;
+    }
+    
 }

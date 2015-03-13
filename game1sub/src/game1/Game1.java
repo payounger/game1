@@ -1,144 +1,170 @@
 package game1;
+
 import java.util.Arrays;
 import javalib.funworld.World;
-import javalib.colors.Black;
-import javalib.colors.Blue;
-import javalib.colors.Red;
-import javalib.worldimages.FrameImage;
-import javalib.worldimages.Posn;
-import javalib.worldimages.RectangleImage;
-import javalib.worldimages.WorldImage;
+import javalib.colors.*;
+import javalib.worldimages.*;
 import game1.Pair;
+import java.util.ArrayList;
 
-public class Game1 extends World{
-    
-        public final int sqSide = 30;
-        public final int gridSize = 7;
-        public final DataStruct[]worldArray = new DataStruct[(gridSize*gridSize)-1];
-        public final int halfSide = (sqSide/2);
-        
-        public WorldImage makeImage() {
+public class Game1 extends World {
+
+    public static final int sqSide = 100;
+    public static final int gridSize = 7;
+    public DataStruct[] worldArray;
+    public final int halfSide = (sqSide / 2);
+    public final Posn sqCenter = new Posn(halfSide, halfSide);
+
+    public WorldImage makeImage() {
         return composeWorld(worldArray);
-        
+
     }
-        public Game1(DataStruct[] array){
-            super();
-            this. = array;
+
+    public Game1(DataStruct[] array) {
+        super();
+        worldArray = array;
+    }
+
+    public World onKeyEvent(String ke) {
+        int playerX = playerLocation(worldArray).getX();
+        int playerY = playerLocation(worldArray).getY();
+        int playerIndex = playerY * (gridSize) + playerX;
+        World w = new Game1(worldArray);
+
+        if (ke.equals("right")) {
+            System.out.println("right key input recieved");
+            if (playerIndex == gridSize - 1) {
+                if (worldArray[0].getKey() == 0) {
+                    worldArray[0].setKey(2);
+                    worldArray[playerIndex].setKey(0);
+                    w = new Game1(worldArray);
+                    return w;
+
+                } else {
+                    return endOfWorld("right collision");
+                }
+            } else if (worldArray[playerIndex + 1].getKey() == 0) {
+                worldArray[playerIndex + 1].setKey(2);
+                worldArray[playerIndex].setKey(0);
+                w = new Game1(worldArray);
+                System.out.println("new world returned based on right key input");
+                return w;
+            } else {
+                return endOfWorld("right collision");
+            }
+
         }
 
-	public BlobWorldFun(Blob blob) {
-		super();
-		this.blob = blob;
-	}
-        
-        public void playerInput(String ke){
-            if(ke.equals("right")){
-                
-            }else if(ke.equals("left")){
-                
+        if (ke.equals("left")) {
+            if (playerIndex == 0) {
+                if (worldArray[gridSize - 1].getKey() == 0) {
+                    worldArray[gridSize - 1].setKey(2);
+                    worldArray[playerIndex].setKey(0);
+                    w = new Game1(worldArray);
+                    return w;
+                } else {
+                    return endOfWorld("right collision");
+                }
+            } else if (worldArray[playerIndex - 1].getKey() == 0) {
+                worldArray[playerIndex - 1].setKey(2);
+                worldArray[playerIndex].setKey(0);
+                w = new Game1(worldArray);
+                return w;
+            } else {
+                return endOfWorld("left collision");
             }
-            
+
         }
-        
-        
-    public void main(String[] args) {
-                Game1 world;
-                
-                
-                world = world.initialize(worldArray);
-                world.makeImage();
-                
-            }
-        
-        
-        //Should initialize an array filled entirely with empty DataStructs
-        //that have their x and y coordinates done properly. Also the player
-        //should be spawned at x=3, y=6.
-        
-        private DataStruct[] initialize(DataStruct[] array){
-            
-        for(int i=0; i<((gridSize*gridSize)-1); i++){
-            
-            for(int x=0; x<gridSize; x++){
-                
-                for(int y=0; y<gridSize; y++){
-                    
-                    if(x==3 && y==6){
-                        array[i] = new DataStruct(x,y,2,0);
-                            }else
-                    
-            array[i] = new DataStruct(x, y, 0, 0);
-                    }
-            }
-        }
-        return array;
+        return endOfWorld("this should only happen if u hit not left or not right");
+
     }
-        
-        
-        //returns the 
-        public DataStruct playerLocation(DataStruct[] array){
-            DataStruct target;
-            int targetKey;
-            for(int i=0; i<((gridSize*gridSize)-1); i++){
-                target = array[i];
-                targetKey = target.getKey();
-                if(targetKey == 2){
-                    return target;
-                } //else should throw an excepttion but this should never be reached
-            }
-        }   
-        
-        public DataStruct enemyLocations(DataStruct[] array){
-            DataStruct target;
-            int targetKey;
-            for(int i=0; i<((gridSize*gridSize)-1); i++){
-                target = array[i];
-                targetKey = target.getKey();
-                if(targetKey == 1){
-                    return target;
-                    }
+
+    public World onTick() {
+        return new Game1(worldArray);
+    }
+
+    public static void main(String[] args) {
+        Game1 world;
+        world = new Game1(new DataStruct[(gridSize * gridSize)]);
+        world.initialize();
+        world.bigBang(sqSide * gridSize, sqSide * gridSize, 1);
+
+    }
+
+    //Should initialize an array filled entirely with empty DataStructs
+    //that have their x and y coordinates done properly. Also the player
+    //should be spawned at x=3, y=6.
+    private void initialize() {
+        for (int x = 0; x < gridSize; x++) {
+            for (int y = 0; y < gridSize; y++) {
+                int i = y * (gridSize) + x;
+                if (x == 3 && y == 6) {
+                    worldArray[i] = new DataStruct(x, y, 2, 0);
+                } else {
+                    worldArray[i] = new DataStruct(x, y, 0, 0);
                 }
             }
-        
-        public WorldImage composeWorld(DataStruct[] array){
-            Posn currentPosn;
-            for(int i=0; i<((gridSize*gridSize)-1); i++){
-                Pair pairy = calcPin(array[i], i);
-                int pairyX = pairy.getX();
-                int pairyY = pairy.getY();
-                currentPosn = new Posn(pairyX, pairyY);
-                if(array[i].getKey()==0){
-                    return new FrameImage(currentPosn, sqSide, sqSide, new Black());
-                }else if(array[i].getKey()==1){
-                    return new RectangleImage(currentPosn, sqSide, sqSide, new Red());
-                }else //if (array[i].getKey()==2){
-                        return new RectangleImage(currentPosn, sqSide, sqSide, new Blue());
+        }
+    }
+
+    //returns the 
+    public DataStruct playerLocation(DataStruct[] array) {
+        DataStruct target;
+        int targetKey;
+        for (int i = 0; i < ((gridSize * gridSize) - 1); i++) {
+            target = array[i];
+            targetKey = target.getKey();
+            if (targetKey == 2) {
+                return target;
+            } //else should throw an excepttion but this should never be reached
+        }
+        throw new RuntimeException("player object not found");
+    }
+
+    public ArrayList<DataStruct> enemyLocations(DataStruct[] array) {
+        DataStruct target;
+        int targetKey;
+        ArrayList<DataStruct> output = new ArrayList();
+        for (int i = 0; i < ((gridSize * gridSize) - 1); i++) {
+            target = array[i];
+            targetKey = target.getKey();
+            if (targetKey == 1) {
+                output.add(target);
             }
         }
-        
-        public Pair calcPin(DataStruct Struct, int i){
-        int x = Struct.getX()+1;
-        int y = Struct.getY()+1;
-        return new Pair(x*halfSide, y*halfSide);
+        return output;
     }
 
-    
+    public WorldImage composeWorld(DataStruct[] array) {
+        Posn currentPosn;
+        int height = sqSide * gridSize;
+        int width = height;
+        WorldImage scene = new RectangleImage(new Posn(width / 2, height / 2), width, height, new White());
+        for (int i = 0; i < array.length; i++) {
+            currentPosn = calcPin(array[i], i);
+            //System.out.println("i is " + i + " array x is " + array[i].getX() + " array y is " + array[i].getY() + " posn x is " + currentPosn.x + " posn y is " + currentPosn.y);
+            Posn thisPosn = currentPosn; //sqCenter;
+            if (array[i].getKey() == 0) {
+                scene = new OverlayImages(scene, new FrameImage(thisPosn, sqSide, sqSide, new Black()));
+            } else if (array[i].getKey() == 1) {
+                scene = new OverlayImages(scene, new RectangleImage(thisPosn, sqSide, sqSide, new Red()));
+            } else //if (array[i].getKey()==2){
+            {
+                scene = new OverlayImages(scene, new RectangleImage(thisPosn, sqSide, sqSide, new Blue()));
+            }
+        }
+
+        return scene;
+    }
+
+    public Posn calcPin(DataStruct Struct, int i) {
+        int x = Struct.getX();
+        int y = Struct.getY();
+        return new Posn(x * sqSide + halfSide, y * sqSide + halfSide);
+    }
 
 }
-        
-        
-        
-            
-        
-        
-        
-        
         //0 = blank
-        //1 = enemy block
-        //2 = player block
-        
-        
+//1 = enemy block
+//2 = player block
 
-    }
-    
-}
