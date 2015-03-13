@@ -4,7 +4,6 @@ import java.util.Arrays;
 import javalib.funworld.World;
 import javalib.colors.*;
 import javalib.worldimages.*;
-import game1.Pair;
 import java.util.ArrayList;
 
 public class Game1 extends World {
@@ -29,7 +28,7 @@ public class Game1 extends World {
         int playerX = playerLocation(worldArray).getX();
         int playerY = playerLocation(worldArray).getY();
         int playerIndex = playerY * (gridSize) + playerX;
-        World w = new Game1(worldArray);
+        World w;
 
         if (ke.equals("right")) {
             System.out.println("right key input recieved");
@@ -75,6 +74,11 @@ public class Game1 extends World {
             }
 
         }
+        
+        if(ke.equals("x")){
+            System.out.println("x input recieved");
+            return endOfWorld("x hit to quit");
+        }
         return endOfWorld("this should only happen if u hit not left or not right");
 
     }
@@ -87,8 +91,7 @@ public class Game1 extends World {
         Game1 world;
         world = new Game1(new DataStruct[(gridSize * gridSize)]);
         world.initialize();
-        world.bigBang(sqSide * gridSize, sqSide * gridSize, 1);
-
+        world.bigBang(sqSide * gridSize, sqSide * gridSize, 0.3);
     }
 
     //Should initialize an array filled entirely with empty DataStructs
