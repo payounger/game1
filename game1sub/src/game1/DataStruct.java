@@ -8,12 +8,10 @@ public class DataStruct {
     private int key;
     private int delay;
     
-    public DataStruct(int x, int y, int key, int delay){
+    public DataStruct(int x, int y, int key){
         this.x = x;
         this.y = y;
-        this.key = key;
-        this.delay = delay;
-        
+        this.key = key;        
     }
     
     public int getX(){
@@ -28,13 +26,9 @@ public class DataStruct {
         return key;
     }
     
-    public int getDelay(){
-        return delay;
-    }
-    
     public DataStruct setKey(int i){
         DataStruct newby;
-        newby = new DataStruct(this.getX(), this.getY(), i, this.getDelay());
+        newby = new DataStruct(this.getX(), this.getY(), i);
         return newby;
     }
     
